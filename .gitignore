@@ -20,6 +20,12 @@ __pycache__/
 property_reconciliation/outputs/*
 property_reconciliation/runs/*
 
+# Sensitive input sources
+PHR CAO 23JUN26.pdf
+PHR CAO 23JUN26.XLSX
+PSD PULL_Power BI - DO NOT DELETE.xlsx
+Divestment Tracker CAO 09 June 2026.xlsx
+
 # OS files
 .DS_Store
 Thumbs.db
