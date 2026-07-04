@@ -1,0 +1,37 @@
+{
+  "phr_excel": {
+    "sheet": "Sheet1",
+    "columns": {
+      "storage_location": "Storage Location",
+      "lin": "LIN Number / DODIC",
+      "description": "Material Description",
+      "serial_number": "Serial Number",
+      "quantity": "ZPBBOM QTY",
+      "nsn": "Material"
+    }
+  },
+  "psd_excel": {
+    "sheet": "POWER BI",
+    "columns": {
+      "psd_id": "PSD ID",
+      "to_pb_lin": "To PB LIN",
+      "source_niin": "Source NIIN",
+      "source_lin_name": "Source LIN Name",
+      "validated_quantity": "Validated Quantity",
+      "serial_numbers": "Serial Numbers",
+      "psd_status": "PSD Status",
+      "vetting_status": "Vetting Status"
+    }
+  },
+  "target_output": {
+    "sheet": "PHR",
+    "columns": {
+      "item_description": "NSN Description",
+      "lin": "LIN",
+      "nsn": "NSN",
+      "serial_number": "Serial Number",
+      "phr_quantity": "OH QTY",
+      "storage_location": "Storage Location"
+    }
+  }
+}
