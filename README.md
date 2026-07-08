@@ -42,6 +42,16 @@ This project is being built with the following principles in mind:
 ## Current Status
 This repository currently contains the initial ETL scaffolding and the beginning of a PDF extraction workflow. The project is still in an early implementation stage and will be expanded over time as the reconciliation logic and reporting outputs are completed.
 
+## PDF Handling Note
+Some PHR files may open through Adobe in a way that is not directly readable by standard PDF extraction tools. When this happens, the recommended workaround is:
+1. Open the original Adobe PDF.
+2. Choose Print.
+3. Select Microsoft Print to PDF as the printer.
+4. Set the page orientation to Landscape.
+5. Print to a new file name and use that exported PDF as the input.
+
+This workflow has been helpful when the original Adobe-rendered PDF is rotated or not easily parsed by the extraction pipeline.
+
 ## Future Use
 This README should be updated as the implementation evolves. Future versions should document:
 - the actual processing steps implemented,
