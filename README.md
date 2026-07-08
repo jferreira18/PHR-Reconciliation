@@ -59,3 +59,14 @@ This README should be updated as the implementation evolves. Future versions sho
 - any assumptions made about input files,
 - configuration choices,
 - and how to run the workflow on new data.
+
+## Recent updates
+This section documents recent improvements made to the parser.
+- Improved `parse_phr_table.py` to detect LIN values using a lookback heuristic and to expand item quantities into single-unit rows.
+- Refined serial-number extraction to exclude common non-serial words and LIN-like tokens, and require serial candidates to contain digits.
+
+## Verification
+This section outlines the verification task for the PDF parser.
+- Task: verify accuracy of the PDF parser against representative PHR PDFs and the Divestment Tracker. See `property_reconciliation/outputs/phr_table.csv` for the latest extractor output.
+
+To verify: run the parser on a set of PDFs, review `outputs/phr_table.csv` for correct `lin`, `nsn`, and per-unit `serial_number` assignment, and update the parser stoplist/regexes as needed.
