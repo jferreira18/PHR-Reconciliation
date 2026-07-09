@@ -1,46 +1,46 @@
-# Python virtual environment
+# Local Python environments
 .venv/
+.venv-*/
 venv/
 env/
 
-# Python cache and compiled files
+# Python caches and test artifacts
 __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
 
-# Jupyter notebooks
-.ipynb_checkpoints/
+# Local agent/editor/tooling state
+.agents/
+.codex/
+.vscode/
+.idea/
+.agent.md
 
-# Local environment files
-.env
-.env.*
+# Uploaded source workbooks/PDFs
+*.pdf
+*.xls
+*.xlsx
+*.xlsm
 
-# Output artifacts and run data
+# Generated outputs and run archives
 property_reconciliation/outputs/*
 property_reconciliation/runs/*
+property_reconciliation/inputs/*
 
-# Sensitive input sources
-PHR CAO 23JUN26.pdf
-PHR CAO 23JUN26.XLSX
-PSD PULL_Power BI - DO NOT DELETE.xlsx
-Divestment Tracker CAO 09 June 2026.xlsx
+# Packaged app build artifacts
+build/
+build_exe*/
+dist/
+release/
+release_final/
+*.spec
 
 # OS files
 .DS_Store
 Thumbs.db
-
-# VS Code settings
-.vscode/
-
-# Data inputs and customized outputs (temporary)
-# Ignore any local input spreadsheets or PDFs placed in an inputs folder
-property_reconciliation/inputs/*
-# Ignore common input file types placed at repo root or under inputs
-*.xlsx
-*.xls
-*.xlsm
-*.pdf
-
-# Ignore any custom/per-user exports placed in outputs
-property_reconciliation/outputs/custom_*
