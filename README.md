@@ -99,6 +99,10 @@ It compares two GCSS-Army Primary Hand Receipt PDFs semantically and creates a l
 - Were serial numbers added or removed?
 - Which validation warnings need review?
 
+The final report looks like a GitHub-style split diff, with baseline records on the left and current records on the right. Changes are highlighted directly on crops from the original PDFs.
+
+![PHR Diff visual report](PHRDiff/docs/screenshots/visual-report-main.png)
+
 ### PHR Diff Inputs
 
 For each PHR Diff run, the user needs:
@@ -124,6 +128,10 @@ PHRDiff\dist\PHRDiff.exe
 5. Optionally enable metadata-only changes or full-page rendering.
 6. Click `Generate Report`.
 7. Open the generated visual report link.
+
+The PHR Diff executable opens a local browser-based upload screen. It does not send files to an external site; the browser page is only a local interface for selecting PDFs.
+
+![PHR Diff upload screen](PHRDiff/docs/screenshots/gui-upload.png)
 
 PHR Diff reports are written under:
 
@@ -240,6 +248,10 @@ PHR Diff reports validation warnings with tags such as:
 - `PARSER`
 - `VALIDATION`
 
+When the `Warnings` filter is selected, the left sidebar switches from change entries to warning entries. Each warning can be selected independently and includes a short explanation.
+
+![PHR Diff tagged warnings](PHRDiff/docs/screenshots/visual-report-warnings.png)
+
 Open `PHRDiff\README.md` for detailed warning explanations.
 
 ## CLI Troubleshooting
@@ -278,4 +290,3 @@ Both tools are local-first:
 - No telemetry is sent.
 - No external services are called.
 - PHR Diff's browser GUI runs on `127.0.0.1` only.
-
