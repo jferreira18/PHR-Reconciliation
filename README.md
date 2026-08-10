@@ -136,7 +136,7 @@ The PHR Diff executable opens a local browser-based upload screen. It does not s
 PHR Diff reports are written under:
 
 ```text
-Documents\PHR Diff Reports
+Downloads\PHR Diff Reports
 ```
 
 ### PHR Diff Source Run

@@ -44,7 +44,7 @@ Steps:
 Reports are written under:
 
 ```text
-Documents\PHR Diff Reports
+Downloads\PHR Diff Reports
 ```
 
 The executable is unsigned, so Windows may show a SmartScreen warning the first time it runs.
@@ -74,7 +74,7 @@ python -m phr_diff OLD.pdf NEW.pdf --full-pages
 
 Options:
 
-- `--output`: report directory, default `phr_report`
+- `--output`: report directory, default `Downloads\PHR Diff Reports\phr_report`
 - `--no-open`: generate files without opening a browser
 - `--json-only`: write only `reconciliation.json`
 - `--debug`: print validation warnings

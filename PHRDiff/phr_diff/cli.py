@@ -7,6 +7,7 @@ from pathlib import Path
 
 from .compare import compare_receipts
 from .parser import parse_hand_receipt
+from .paths import default_reports_root
 from .report import generate_report, summary
 from .validation import attach_validation_warnings
 
@@ -15,7 +16,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Generate a Git-style visual diff for two GCSS-Army PHR PDFs.")
     parser.add_argument("old_pdf", type=Path)
     parser.add_argument("new_pdf", type=Path)
-    parser.add_argument("--output", type=Path, default=Path("phr_report"))
+    parser.add_argument("--output", type=Path, default=default_reports_root() / "phr_report")
     parser.add_argument("--no-open", action="store_true")
     parser.add_argument("--json-only", action="store_true")
     parser.add_argument("--debug", action="store_true")

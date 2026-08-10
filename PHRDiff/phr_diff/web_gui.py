@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-import cgi
+from dataclasses import dataclass
+from email import policy
+from email.parser import BytesParser
 import html
-import shutil
 import sys
 import threading
 import uuid
@@ -14,6 +15,7 @@ from urllib.parse import unquote, urlparse
 
 from .compare import compare_receipts
 from .parser import parse_hand_receipt
+from .paths import default_reports_root
 from .report import generate_report, summary
 from .validation import attach_validation_warnings, tagged_validation_warnings
 
@@ -21,8 +23,50 @@ from .validation import attach_validation_warnings, tagged_validation_warnings
 APP_TITLE = "PHR Diff"
 
 
+@dataclass
+class UploadedFile:
+    filename: str
+    data: bytes
+
+
+def parse_multipart_form(
+    content_type: str,
+    content_length: int,
+    body_stream,
+) -> tuple[dict[str, str], dict[str, UploadedFile]]:
+    if not content_type.lower().startswith("multipart/form-data"):
+        raise ValueError("Upload form must use multipart/form-data.")
+
+    body = body_stream.read(content_length)
+    message_bytes = (
+        f"Content-Type: {content_type}\r\nMIME-Version: 1.0\r\n\r\n".encode("utf-8")
+        + body
+    )
+    message = BytesParser(policy=policy.default).parsebytes(message_bytes)
+    if not message.is_multipart():
+        raise ValueError("Upload form could not be parsed.")
+
+    fields: dict[str, str] = {}
+    files: dict[str, UploadedFile] = {}
+    for part in message.iter_parts():
+        params = dict(part.get_params(header="content-disposition", unquote=True) or [])
+        name = params.get("name")
+        if not name:
+            continue
+
+        payload = part.get_payload(decode=True) or b""
+        filename = params.get("filename")
+        if filename is not None:
+            files[name] = UploadedFile(filename=filename, data=payload)
+        else:
+            charset = part.get_content_charset() or "utf-8"
+            fields[name] = payload.decode(charset, errors="replace")
+
+    return fields, files
+
+
 def reports_root() -> Path:
-    root = Path.home() / "Documents" / "PHR Diff Reports"
+    root = default_reports_root()
     root.mkdir(parents=True, exist_ok=True)
     return root
 
@@ -133,7 +177,7 @@ def home_page() -> bytes:
   <button type="submit">Generate Report</button>
 </form>
 <div class="panel">
-  <p>Reports are written under <code>Documents\\PHR Diff Reports</code>.</p>
+  <p>Reports are written under <code>Downloads\\PHR Diff Reports</code>.</p>
   <p>After the report is generated, open <code>index.html</code> or use the report link shown here.</p>
 </div>""",
     )
@@ -182,10 +226,11 @@ class WebGuiHandler(BaseHTTPRequestHandler):
             )
 
     def _run_upload(self) -> bytes:
-        form = cgi.FieldStorage(fp=self.rfile, headers=self.headers, environ={"REQUEST_METHOD": "POST"})
-        old_field = form["old_pdf"]
-        new_field = form["new_pdf"]
-        folder_name = sanitize_folder_name(form.getfirst("folder_name", "phr_report"))
+        content_length = int(self.headers.get("Content-Length", "0"))
+        form, files = parse_multipart_form(self.headers.get("Content-Type", ""), content_length, self.rfile)
+        old_field = files["old_pdf"]
+        new_field = files["new_pdf"]
+        folder_name = sanitize_folder_name(form.get("folder_name", "phr_report"))
         run_id = f"{folder_name}_{uuid.uuid4().hex[:8]}"
         output_dir = reports_root() / run_id
         upload_dir = output_dir / "_uploads"
@@ -193,10 +238,8 @@ class WebGuiHandler(BaseHTTPRequestHandler):
 
         old_pdf = upload_dir / (Path(old_field.filename or "baseline.pdf").name or "baseline.pdf")
         new_pdf = upload_dir / (Path(new_field.filename or "current.pdf").name or "current.pdf")
-        with old_pdf.open("wb") as stream:
-            shutil.copyfileobj(old_field.file, stream)
-        with new_pdf.open("wb") as stream:
-            shutil.copyfileobj(new_field.file, stream)
+        old_pdf.write_bytes(old_field.data)
+        new_pdf.write_bytes(new_field.data)
 
         old_receipt = parse_hand_receipt(old_pdf)
         new_receipt = parse_hand_receipt(new_pdf)

@@ -9,6 +9,7 @@ from tkinter import BooleanVar, StringVar, Tk, filedialog, messagebox, ttk
 
 from .compare import compare_receipts
 from .parser import parse_hand_receipt
+from .paths import default_reports_root
 from .report import generate_report, summary
 from .validation import attach_validation_warnings
 
@@ -20,7 +21,7 @@ class PHRDiffApp:
         self.root.geometry("760x560")
         self.root.minsize(680, 500)
 
-        default_output = Path.home() / "Documents" / "PHR Diff Reports"
+        default_output = default_reports_root()
         self.old_pdf = StringVar()
         self.new_pdf = StringVar()
         self.output_dir = StringVar(value=str(default_output))
@@ -212,4 +213,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
