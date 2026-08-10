@@ -16,6 +16,7 @@ GUTTER = 18
 HEADER_HEIGHT = 78
 FOOTER_HEIGHT = 28
 PANEL_LABEL_HEIGHT = 18
+SIDE_PAGE_ROTATION = 270
 
 COLOR_ADDED = (0.14, 0.53, 0.23)
 COLOR_REMOVED = (0.81, 0.19, 0.15)
@@ -276,16 +277,16 @@ def _draw_pdf_side(
         return
 
     content_rect = fitz.Rect(panel.x0 + 8, panel.y0 + PANEL_LABEL_HEIGHT, panel.x1 - 8, panel.y1 - 8)
-    target = _fit_rect(clip, content_rect)
-    page.show_pdf_page(target, source_doc, page_number - 1, clip=clip)
+    target = _fit_rect(_rotated_rect(clip, SIDE_PAGE_ROTATION), content_rect)
+    page.show_pdf_page(target, source_doc, page_number - 1, clip=clip, rotate=SIDE_PAGE_ROTATION)
     page.draw_rect(target, color=COLOR_BORDER, width=0.6)
 
     clip_bbox = BBox.from_rect(clip)
     for bbox in context_bboxes:
-        mapped = _map_rect(bbox, clip_bbox, target)
+        mapped = _map_rect(bbox, clip_bbox, target, SIDE_PAGE_ROTATION)
         page.draw_rect(mapped, color=COLOR_CONTEXT, width=1.0)
     for bbox in highlights:
-        mapped = _map_rect(bbox, clip_bbox, target)
+        mapped = _map_rect(bbox, clip_bbox, target, SIDE_PAGE_ROTATION)
         page.draw_rect(mapped, color=highlight_color, fill=highlight_color, fill_opacity=0.22, width=1.2)
 
     page.insert_text(
@@ -311,7 +312,43 @@ def _fit_rect(source: fitz.Rect, target: fitz.Rect) -> fitz.Rect:
     return fitz.Rect(x0, y0, x0 + width, y0 + height)
 
 
-def _map_rect(bbox: BBox, clip: BBox, target: fitz.Rect) -> fitz.Rect:
+def _rotated_rect(rect: fitz.Rect, rotation: int) -> fitz.Rect:
+    normalized = rotation % 360
+    if normalized in (90, 270):
+        return fitz.Rect(0, 0, rect.height, rect.width)
+    return fitz.Rect(0, 0, rect.width, rect.height)
+
+
+def _map_rect(bbox: BBox, clip: BBox, target: fitz.Rect, rotation: int = 0) -> fitz.Rect:
+    normalized = rotation % 360
+    if normalized == 90:
+        x_scale = target.width / clip.height
+        y_scale = target.height / clip.width
+        return fitz.Rect(
+            target.x0 + (clip.y1 - bbox.y1) * x_scale,
+            target.y0 + (bbox.x0 - clip.x0) * y_scale,
+            target.x0 + (clip.y1 - bbox.y0) * x_scale,
+            target.y0 + (bbox.x1 - clip.x0) * y_scale,
+        )
+    if normalized == 180:
+        x_scale = target.width / clip.width
+        y_scale = target.height / clip.height
+        return fitz.Rect(
+            target.x0 + (clip.x1 - bbox.x1) * x_scale,
+            target.y0 + (clip.y1 - bbox.y1) * y_scale,
+            target.x0 + (clip.x1 - bbox.x0) * x_scale,
+            target.y0 + (clip.y1 - bbox.y0) * y_scale,
+        )
+    if normalized == 270:
+        x_scale = target.width / clip.height
+        y_scale = target.height / clip.width
+        return fitz.Rect(
+            target.x0 + (bbox.y0 - clip.y0) * x_scale,
+            target.y0 + (clip.x1 - bbox.x1) * y_scale,
+            target.x0 + (bbox.y1 - clip.y0) * x_scale,
+            target.y0 + (clip.x1 - bbox.x0) * y_scale,
+        )
+
     x_scale = target.width / clip.width
     y_scale = target.height / clip.height
     return fitz.Rect(
