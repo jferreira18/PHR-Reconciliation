@@ -283,10 +283,10 @@ def _draw_pdf_side(
 
     clip_bbox = BBox.from_rect(clip)
     for bbox in context_bboxes:
-        mapped = _map_rect(bbox, clip_bbox, target, SIDE_PAGE_ROTATION)
+        mapped = _map_rect(bbox, clip_bbox, target)
         page.draw_rect(mapped, color=COLOR_CONTEXT, width=1.0)
     for bbox in highlights:
-        mapped = _map_rect(bbox, clip_bbox, target, SIDE_PAGE_ROTATION)
+        mapped = _map_rect(bbox, clip_bbox, target)
         page.draw_rect(mapped, color=highlight_color, fill=highlight_color, fill_opacity=0.22, width=1.2)
 
     page.insert_text(
