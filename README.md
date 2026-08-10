@@ -3,7 +3,7 @@
 This repository now contains two separate local tools for Primary Hand Receipt work:
 
 1. `property_reconciliation`: reconciles one PHR against a PSD PULL workbook and produces a CSV.
-2. `PHRDiff`: compares two PHR PDFs and produces a GitHub-style visual split-diff report.
+2. `PHRDiff`: compares two PHR PDFs and produces a GitHub-style visual split-diff report plus a printable side-by-side PDF report.
 
 The tools are related, but their processes stay separate. Use `property_reconciliation` when you need the PSD reconciliation CSV. Use `PHRDiff` when you need to compare two PHR PDFs against each other.
 
@@ -99,7 +99,7 @@ It compares two GCSS-Army Primary Hand Receipt PDFs semantically and creates a l
 - Were serial numbers added or removed?
 - Which validation warnings need review?
 
-The final report looks like a GitHub-style split diff, with baseline records on the left and current records on the right. Changes are highlighted directly on crops from the original PDFs.
+The HTML report looks like a GitHub-style split diff, with baseline records on the left and current records on the right. PHR Diff also writes `phr-diff-report.pdf`, a printable side-by-side PDF with the baseline page on the left, the current page on the right, and the same highlights painted into the PDF.
 
 ![PHR Diff visual report](PHRDiff/docs/screenshots/visual-report-main.png)
 
@@ -127,7 +127,7 @@ PHRDiff\dist\PHRDiff.exe
 4. Enter a report folder name.
 5. Optionally enable metadata-only changes or full-page rendering.
 6. Click `Generate Report`.
-7. Open the generated visual report link.
+7. Open the generated visual report link or the PDF report link.
 
 The PHR Diff executable opens a local browser-based upload screen. It does not send files to an external site; the browser page is only a local interface for selecting PDFs.
 
@@ -176,7 +176,7 @@ Use `PHRDiff` when:
 
 - you have two PHR PDFs
 - you need to see what changed between the old and new receipt
-- you want a side-by-side visual report with PDF crops and tagged warnings
+- you want an interactive visual report, a printable side-by-side PDF report, and tagged warnings
 
 ## First-Time Setup For Source Runs
 

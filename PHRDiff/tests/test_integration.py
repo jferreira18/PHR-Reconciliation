@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import pymupdf as fitz
+
 from phr_diff.compare import compare_receipts
 from phr_diff.parser import parse_hand_receipt
 from phr_diff.report import generate_report
@@ -32,5 +34,8 @@ def test_real_fixture_comparison_and_crop_generation(tmp_path):
     index = generate_report(old_pdf, new_pdf, july, august, reconciliation, tmp_path)
     assert index.exists()
     assert (tmp_path / "reconciliation.json").exists()
+    pdf_report = tmp_path / "phr-diff-report.pdf"
+    assert pdf_report.exists()
+    with fitz.open(pdf_report) as doc:
+        assert doc.page_count >= 2
     assert any((tmp_path / "assets" / "crops").glob("*.png"))
-

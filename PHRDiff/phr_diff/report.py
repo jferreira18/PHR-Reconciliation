@@ -7,6 +7,7 @@ from typing import Any
 
 from .locator import highlight_pair
 from .models import BBox, FieldChange, HandReceipt, Reconciliation, RenderedImage
+from .pdf_report import generate_pdf_report
 from .renderer import render_full_page, render_region
 from .validation import tagged_validation_warnings
 from .web_report import HTML_TEMPLATE
@@ -123,6 +124,7 @@ def generate_report(
     full_pages: bool = False,
 ) -> Path:
     output_dir.mkdir(parents=True, exist_ok=True)
+    pdf_path = generate_pdf_report(old_pdf, new_pdf, old_receipt, new_receipt, reconciliation, output_dir)
     changes = reconciliation.changes
     change_payload = []
     for index, change in enumerate(changes, start=1):
@@ -138,6 +140,7 @@ def generate_report(
         "changes": change_payload,
         "warnings": reconciliation.warnings,
         "warning_details": tagged_validation_warnings(reconciliation.warnings),
+        "pdf_report": pdf_path.name,
     }
 
     (output_dir / "reconciliation.json").write_text(json.dumps(data, indent=2), encoding="utf-8")

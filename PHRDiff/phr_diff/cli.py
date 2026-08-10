@@ -71,6 +71,9 @@ def main(argv: list[str] | None = None) -> int:
     print(f"Detected changes: {stats['changes']}")
     print(f"Validation warnings: {stats['validation_warnings']}")
     print(f"Visual report: {index}")
+    pdf_report = args.output / "phr-diff-report.pdf"
+    if pdf_report.exists():
+        print(f"PDF report: {pdf_report}")
 
     if args.debug and reconciliation.warnings:
         print("Warnings:")
@@ -84,4 +87,3 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

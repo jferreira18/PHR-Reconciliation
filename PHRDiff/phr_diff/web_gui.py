@@ -217,6 +217,7 @@ class WebGuiHandler(BaseHTTPRequestHandler):
         )
         stats = summary(reconciliation)
         report_url = f"/report/{run_id}/index.html"
+        pdf_url = f"/report/{run_id}/phr-diff-report.pdf"
         stat_html = "".join(
             f"<div class='stat'><b>{value}</b><span>{html.escape(label.replace('_', ' ').title())}</span></div>"
             for label, value in stats.items()
@@ -242,6 +243,7 @@ class WebGuiHandler(BaseHTTPRequestHandler):
             f"""<h1>Report Generated</h1>
 <p>Saved to <code>{html.escape(str(index))}</code>.</p>
 <p><a class="button" href="{report_url}" target="_blank">Open Visual Report</a>
+<a class="button secondary" href="{pdf_url}" target="_blank">Open PDF Report</a>
 <a class="button secondary" href="/">Run Another Compare</a>
 <a class="button secondary" href="/shutdown">Close App</a></p>
 <div class="panel stats">{stat_html}</div>
@@ -260,6 +262,8 @@ class WebGuiHandler(BaseHTTPRequestHandler):
             content_type = "application/json"
         elif target.suffix.lower() == ".png":
             content_type = "image/png"
+        elif target.suffix.lower() == ".pdf":
+            content_type = "application/pdf"
         data = target.read_bytes()
         self.send_response(200)
         self.send_header("Content-Type", content_type)

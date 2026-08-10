@@ -1,6 +1,6 @@
 # PHR Diff
 
-PHR Diff compares two GCSS-Army Primary Hand Receipt PDFs and creates a local GitHub-style visual reconciliation report.
+PHR Diff compares two GCSS-Army Primary Hand Receipt PDFs and creates a local GitHub-style visual reconciliation report plus a side-by-side PDF report.
 
 The app compares structured PHR data first, then uses the original PDFs only for visual crops and highlights. It does not upload files, call cloud APIs, or use image comparison as the source of truth.
 
@@ -39,7 +39,7 @@ Steps:
 3. Choose the current PDF.
 4. Pick a report folder name.
 5. Click `Generate Report`.
-6. Open the generated visual report from the link shown after processing.
+6. Open the generated visual report or PDF report from the links shown after processing.
 
 Reports are written under:
 
@@ -137,7 +137,7 @@ Pipeline:
 old PDF -> parser -> HandReceipt
 new PDF -> parser -> HandReceipt
 HandReceipt pair -> comparator -> Reconciliation
-Reconciliation + PDFs -> locator/renderer -> HTML split report
+Reconciliation + PDFs -> locator/renderer -> HTML split report + side-by-side PDF report
 ```
 
 Main modules:
@@ -146,7 +146,8 @@ Main modules:
 - `phr_diff.compare`: compares normalized records semantically.
 - `phr_diff.validation`: emits tagged validation warnings.
 - `phr_diff.renderer`: renders PDF crops and optional full-page images.
-- `phr_diff.report`: writes `index.html`, assets, and `reconciliation.json`.
+- `phr_diff.pdf_report`: writes a printable side-by-side PDF with the same highlights.
+- `phr_diff.report`: writes `index.html`, `phr-diff-report.pdf`, assets, and `reconciliation.json`.
 - `phr_diff.web_gui`: local browser-based GUI for non-technical users.
 - `phr_diff.cli`: command-line entry point for `python -m phr_diff`.
 
@@ -156,6 +157,7 @@ A normal report directory contains:
 
 ```text
 index.html
+phr-diff-report.pdf
 reconciliation.json
 assets/
   crops/
@@ -163,6 +165,8 @@ assets/
 ```
 
 `index.html` is portable and can be opened locally in a browser.
+
+`phr-diff-report.pdf` is a printable side-by-side report. It shows the baseline PDF page on the left, the current PDF page on the right, and paints the same change highlights used by the HTML report.
 
 `reconciliation.json` contains the structured comparison, warning list, tagged warning details, and image payloads used by the HTML report.
 
@@ -194,7 +198,7 @@ The test suite covers:
 - warning classification
 - coordinate detection
 - real fixture integration using the July and August PDFs
-- crop/report generation
+- crop, HTML report, and PDF report generation
 
 ## Known Limitations
 
@@ -211,4 +215,3 @@ PHR Diff is designed for sensitive local documents:
 - No telemetry is sent.
 - No external services are called.
 - The GUI runs on `127.0.0.1` only.
-
